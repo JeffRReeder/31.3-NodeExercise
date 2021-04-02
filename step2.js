@@ -5,21 +5,32 @@ const axios = require('axios');
 function cat(path){
     fs.readFile(path, 'utf8', function(err, data) {
         if (err){
-            console.log("ERROR", err);
+            console.log("PATH ERROR", err);
             process.exit(1);
+        } else {
+            console.log("Your file shows: ", data);
         }
-        console.log("Your file shows: ", data);
+        
     });
 }
 
-cat(process.argv[2]);
+//cat(process.argv[2]);
 
-function webCat(path){
-    fs.readFile(path, function(err, data){
-        if (err){
-            console.log(err);
-            process.exit(1);
-        }
-        console.log("Data is: ", data);
-    });
+async function webCat(url){
+    try {
+        let resp = await axios.get(url);
+        console.log("your response is: ", resp.data);
+    } catch (err){
+        console.log("URL ERROR: ");
+        process.exit(1);
+    }
 }
+
+let path = process.argv[2];
+
+if (path.slice(0, 4) === 'http') {
+  webCat(path);
+} else {
+  cat(path);
+}
+    
